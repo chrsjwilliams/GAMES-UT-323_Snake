@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField] ScoreManager scoreManager;
     [SerializeField] Transform segmentPrefab;
     [SerializeField] int initialSize = 4;
-    private Vector2 moveDirection = Vector2.right;
+    public Vector2 moveDirection = Vector2.right;
     List<Transform> segments;
 
     SwipeManager swipeManager;
@@ -65,9 +66,11 @@ public class Player : MonoBehaviour
         segments.Add(newSegment);
     }
 
-    void RestartGame()
+    public void RestartGame()
     {
-        for(int i = 1; i < segments.Count; i++)
+        scoreManager.ResetScore();
+
+        for (int i = 1; i < segments.Count; i++)
         {
             Destroy(segments[i].gameObject);
         }
@@ -80,6 +83,7 @@ public class Player : MonoBehaviour
         }
 
         transform.position = Vector3.zero;
+        moveDirection = Vector2.right;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -87,6 +91,7 @@ public class Player : MonoBehaviour
         var food = other.GetComponent<FoodManager>();
         if (food != null)
         {
+            scoreManager.IncrementScore();
             Grow();
         }
         else if(other.tag == "Obstacle")
